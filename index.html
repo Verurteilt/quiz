@@ -45,15 +45,19 @@
 			var _video = player;
 			tiempo = _video.currentTime;
 		}
-		cb(parseInt(tiempo),tiempos,vzaar,player);
-		 setTimeout(function(){ checar_tiempos(vzaar,player,cb,tiempos) }, 300);
+		var new_tiempos = cb(parseInt(tiempo),tiempos,vzaar,player);
+		 setTimeout(function(){ checar_tiempos(vzaar,player,cb,new_tiempos) }, 300);
 	}
 
 	function cb(time,tiempos,vzaar,player){
 		if (vzaar == false){
 			var _video = player;
+			if(_video.ended){
+				tiempos = $.extend({}, tiempos_questions_originales);
+			}
 			if(String(time) in tiempos){
 				var question = tiempos[String(time)];
+				delete tiempos[String(time)];
 				if($(question).is(":visible") == false){
 					_video.pause();
 					$(question).show();
@@ -61,15 +65,53 @@
 				}
 			}
 		}
+		return tiempos;
 	}
 
+	function agregar_retro(div,mensaje, bueno){
+		if(bueno){
+			mensaje = "<p style='color:green;'>" +mensaje+"</p>"
+		}else{
+			mensaje = "<p style='color:red;'>" +mensaje+"</p>"
+		}
+		div.find('#retroalimentacion').html(mensaje);
+		setTimeout(function(){
+			div.find('#retroalimentacion').empty()
+		},2000)
+	}
+	
+	function reanudar_video(vzaar){
+		if(vzaar){
+			console.log("YES");
+		}else{
+			var player =document.getElementById('video_movie');
+			player.controls=true
+			player.play();
+		}
+	}
+	function validarRespuesta(context){
+		var $this =$(context);
+		var $parent1 = $this.parent();
+		var $parent2 = $parent1.parent();
+		var $div_quiz = $parent2.parent();
+		var $respuesta_selected = $div_quiz.find(':checked');
+		if($respuesta_selected.data('correcta')){
+			agregar_retro($div_quiz, "Perfecto!", true);
+			if($('video')){
+				$div_quiz.hide();
+				reanudar_video(false);
+			}
+		}else{
+			agregar_retro($div_quiz, "Hmmm intentalo de nuevo!", false);
+		}
+
+	}
 	$(document).ready(function(){
 		var myPlayer = document.getElementById('video_movie');
 		var video2 = $(myPlayer);
-		var tiempos_questions = video2.data('times');
-		checar_tiempos(false,myPlayer,cb,tiempos_questions);
-
-
+		window.tiempos_questions_originales = video2.data('times');
+		window.tiempos_falsos = $.extend({}, tiempos_questions_originales);
+		checar_tiempos(false,myPlayer,cb,tiempos_falsos);
 	});		
 </script>
 </head>
@@ -90,7 +132,7 @@ CONTENIDO
 			<div class="video">
 
 <!--********** Video **********-->
-				<video width="320" controls data-times='{"3":"#quiz_1"}'  height="240" id="video_movie" class="video_2">
+				<video width="320" controls data-times='{"3":"#quiz_1", "9": "#quiz_2"}'  height="240" id="video_movie" class="video_2">
 			  		<source src="movie.mp4" type="video/mp4">
 				</video>
 
@@ -101,29 +143,58 @@ CONTENIDO
 <!-- Preguntas -->
 					<form action="">
 						<div>
-							<input type="checkbox">
+							<input type="radio" name="quiz_1">
 							<label for="">Curabitur convallis imperdiet risus, quis scelerisque lectus facilisis in.</label>
 						</div>
 
 						<div>
-							<input type="checkbox">
+							<input type="radio" name="quiz_1">
 							<label for="">Duis convallis leo eu lacinia eleifend.</label>
 						</div>
 
 						<div>
-							<input type="checkbox">
+							<input type="radio" name="quiz_1" data-correcta="true">
 							<label for="">Quisque luctus magna diam, eget fermentum elit maximus nec.</label>
 						</div>
 					</form>
+					<span id="retroalimentacion"></span>
 
 <!-- Botones -->
 					<div class="clearfix botones">
 						<div class="col-md-6">
-							<a href="#">Saltar</a>
+							<a href="#" onclick="validarRespuesta(this);">Contestar</a>
+						</div>
+					</div>
+
+				</div>
+
+				<div id="quiz_2" class="flotante">
+					<h3>¿Hola?</h3>
+
+<!-- Pregunta 2 -->
+					<form action="">
+						<div>
+							<input type="radio" name="quiz_2" data-correcta="true">
+							<label for="">Hi</label>
 						</div>
 
+						<div>
+							<input type="radio" name="quiz_2">
+							<label for="">Hello</label>
+						</div>
+
+						<div>
+							<input type="radio" name="quiz_2">
+							<label for="">What</label>
+						</div>
+					</form>
+
+					<span id="retroalimentacion"></span>
+
+<!-- Botones -->
+					<div class="clearfix botones">
 						<div class="col-md-6">
-							<a href="#">Contestar</a>
+							<a href="#" onclick="validarRespuesta(this);">Contestar</a>
 						</div>
 					</div>
 
