@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+<!-- Necesidades básicas de la página
+ ================================================== -->
+<meta charset="utf-8">
+<title>Quiz de Video</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<meta name="author" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+ <!-- Javascript
+ ================================================== -->
+<script type="text/javascript" src="js/head.load.min.js"></script>
+
+<!-- CSS
+ ================================================== -->
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="css/quiz-video.css" />
+
+<!--[if lt IE 9]>
+	<link rel="stylesheet" type="text/css" href="css/ie.css" />
+<![endif]-->
+
+<!-- Favicons
+================================================== -->
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="57x57" href="favicon-57.png">
+<link rel="apple-touch-icon" sizes="72x72" href="favicon-72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="favicon-114.png">
+<link rel="apple-touch-icon" sizes="144x144" href="favicon-144.png">
+<link rel="apple-touch-icon" href="favicon-57.png">
+<link href="http://vjs.zencdn.net/4.11/video-js.css" rel="stylesheet">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+
+	function checar_tiempos(vzaar,player,cb,tiempos){
+		var tiempo;
+		if(vzaar == false){
+			var _video = player;
+			tiempo = _video.currentTime;
+		}
+		cb(parseInt(tiempo),tiempos,vzaar,player);
+		 setTimeout(function(){ checar_tiempos(vzaar,player,cb,tiempos) }, 300);
+	}
+
+	function cb(time,tiempos,vzaar,player){
+		if (vzaar == false){
+			var _video = player;
+			if(String(time) in tiempos){
+				var question = tiempos[String(time)];
+				if($(question).is(":visible") == false){
+					_video.pause();
+					$(question).show();
+					_video.controls = false;
+				}
+			}
+		}
+	}
+
+	$(document).ready(function(){
+		var myPlayer = document.getElementById('video_movie');
+		var video2 = $(myPlayer);
+		var tiempos_questions = video2.data('times');
+		checar_tiempos(false,myPlayer,cb,tiempos_questions);
+
+
+	});		
+</script>
+</head>
+<body>
+
+<!--*********************
+HEADER
+*********************-->
+<header>
+</header>
+<!--*********************
+CONTENIDO
+*********************-->  
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="video">
+
+<!--********** Video **********-->
+	<video width="320" controls data-times='{"3":"#quiz_1"}'  height="240" id="video_movie" class="video_2">
+  		<source src="movie.mp4" type="video/mp4">
+	</video>
+
+<!--********** Preguntas **********-->
+				<div id="quiz_1" style="display:none;">
+					<h3>¿Vestibulum scelerisque in orci ac hendrerit?</h3>
+
+<!-- Preguntas -->
+					<form action="">
+						<div>
+							<input type="checkbox">
+							<label for="">Curabitur convallis imperdiet risus, quis scelerisque lectus facilisis in.</label>
+						</div>
+
+						<div>
+							<input type="checkbox">
+							<label for="">Duis convallis leo eu lacinia eleifend.</label>
+						</div>
+
+						<div>
+							<input type="checkbox">
+							<label for="">Quisque luctus magna diam, eget fermentum elit maximus nec.</label>
+						</div>
+					</form>
+
+<!-- Botones -->
+					<div class="clearfix botones">
+						<div class="col-md-6">
+							<a href="#">Saltar</a>
+						</div>
+
+						<div class="col-md-6">
+							<a href="#">Contestar</a>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--*********************
+FOOTER
+*********************-->
+<footer>
+</footer>
+
+</body>
+</html>
